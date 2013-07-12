@@ -1,0 +1,18 @@
+#map-container {
+	height: 500px;
+	border: 1px solid #000;
+}
+
+#map_canvas, #map-canvas {
+	display: block;
+	height: 500px;
+	width: 100%;
+}
+
+#map_canvas img, #map-canvas img {
+	max-width: none;
+}
+
+#main {
+	margin-top: 50px;
+}

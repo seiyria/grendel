@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Grendelcator</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <meta charset="utf-8">
+        <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <link href="css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+        <link href="css/my.css" rel="stylesheet">
+
+        <!--TODO: API Key -->
+        <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true&libraries=places"></script>
+
+        <script src="js/global.js"></script>
+        <script src="js/map.init.js"></script>
+        <script src="js/map.js"></script>
+    </head>
+    <body>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+            <a class="brand" href="#">Grendel</a>
+            <ul class="nav">
+                <li class="active"><a href="#">Home</a></li>
+                <li><a href="#">Other</a></li>
+            </ul>
+            <ul class="nav pull-right">
+                <li id="status"><a href="#">OK</a></li>
+                <li><a href="#">Location:</a></li>
+                <li id="lat"><a href="#">latitude</a></li>
+                <li id="lon"><a href="#">longitude</a></li>
+            </ul>
+            </div>
+        </div>
+        <div class="container" id="main">
+            <div class="row">
+            <div class="span8" id="map-container">
+                <div id="map-canvas"></div>
+            </div>
+            <div class="span2">
+                <h1>Nearby:</h1>
+                <ul id="nearby">
+                </ul>
+            </div>
+            </div>
+        </div>
+
+        <script src="js/jquery-1.10.2.min.js"></script>
+        <script src="js/jquery.cookie.js"></script>
+        <script src="js/storage.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+    </body>
+</html>

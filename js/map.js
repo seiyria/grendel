@@ -83,6 +83,16 @@ function getDataFor(place) {
         container.website = detailedPlace.website;
 
         Data.setVar("company_"+container.name, container);
+
+        $.ajax({
+            url: "ajax.php", 
+            dataType: "json",
+            type: "POST",
+            data: {
+                action: "add",
+                data: JSON.stringify(container)
+            }
+        });
     });
 
 }

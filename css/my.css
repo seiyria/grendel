@@ -16,3 +16,17 @@
 #main {
 	margin-top: 50px;
 }
+
+.form-horizontal .control-label {
+	padding-top: 0;
+	font-weight: bold;
+}
+
+#nearby-container {
+	height: 500px;
+	overflow-y: scroll;
+}
+
+#clients td {
+	vertical-align: middle;
+}

@@ -7,6 +7,10 @@ function $$(id) {
 	return $("#"+id); 
 }
 
+function isModalActive() {
+	return $(".modal-backdrop").length > 0;
+}
+
 /*
 Global Data
 */

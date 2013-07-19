@@ -1,15 +1,10 @@
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
-    <a class="brand" href="#">Grendel</a>
-    <ul class="nav">
-        <?php build_nav(); ?>
-    </ul>
-    <ul class="nav pull-right">
-        <li id="status"><a href="#">OK</a></li>
-        <li><a href="#">Location:</a></li>
-        <li id="lat"><a href="#">latitude</a></li>
-        <li id="lon"><a href="#">longitude</a></li>
-    </ul>
+        <a class="brand" href="#">Grendel</a>
+            <?php build_nav(); ?>
+        <?php
+
+        ?>
     </div>
 </div>
 
@@ -19,16 +14,28 @@ function is_current($name) {
 }
 
 function build_nav() {
+    ?>
+    <ul class="nav">
+    <?php
+
+    $current = '';
+
     $pages = array("Home" => "index.php",
                    "Search" => "map.php",
-                   "Clients" => "clients.php");
+                   "Businesses" => "clients.php");
 
     foreach($pages as $name=>$loc) {
+        if(!$current) $current = is_current($loc) ? $loc : '';
         ?>
-
         <li<?=is_current($loc) ? " class='active'" : ''?>><a href="<?=$loc?>"><?=$name?></a></li>
 
         <?php
     }
+    ?>
+    </ul>
+    <?php
+    
+    if(file_exists(basename($current, ".php")."_nav.php"))
+        include(basename($current, ".php")."_nav.php");
 }
 ?>

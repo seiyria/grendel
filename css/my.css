@@ -1,3 +1,6 @@
+* {
+	font-family: FontAwesome;
+}
 #map-container {
 	height: 500px;
 	border: 1px solid #000;
@@ -29,4 +32,14 @@
 
 #clients td {
 	vertical-align: middle;
+}
+
+.last-analysis {
+	font-style: italic;
+	font-color: #333;
+	font-size: 90%;
+}
+
+.phone-number {
+	font-size: 85%;
 }

@@ -2,7 +2,7 @@
 <html>
     <head>
         <?php include('head.php'); ?>
-        <title>Grendelcator</title>
+        <title>Grendel: Map</title>
         <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true&libraries=places&key=AIzaSyA8CuF_kzIzVfBBhpsbH43HjTl9uQz5VuE"></script>
         <script src="js/map.init.js"></script>
         <script src="js/map.js"></script>

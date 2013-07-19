@@ -26,6 +26,8 @@ class DBObject
     private $table;
     private $fields = array();
 
+    public $isDirty = false;
+
     function __construct($table, $fields) {
         $this->table = $table;
         foreach($fields as $key)
@@ -51,10 +53,16 @@ class DBObject
         );
         $res->execute(array($id));
         $row = $res->fetch(PDO::FETCH_ASSOC);
-        $this->id = $id;
+
+        if(!$row) {
+            $this->isDirty = true;
+            return;
+        }
+
         foreach(array_keys($row) as $key) {
             $this->$key = $row[$key];
         }
+        $this->id = $id;
     }
 
     function insert() {
@@ -151,6 +159,6 @@ class Business extends DBObject {
 
 class BusinessInfo extends DBObject {
     function __construct() {
-        parent::__construct('businessanalysis', array("businessinfo_id","has_flash","meta_tags","seo_rank","mobile_analysis","has_contact_info_on_site", "last_analysis"));
+        parent::__construct('businessanalysis', array("businessinfo_id", "page", "plugin_analysis","meta_tags","seo_rank","mobile_analysis","has_contact_info_on_site", "dead_links", "last_analysis"));
     }
 }

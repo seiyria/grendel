@@ -4,11 +4,14 @@
 <html>
     <head>
         <?php include('head.php'); ?>
-        <title>Grendelients</title>
+        <title>Grendel: Businesses</title>
         <link href="css/jquery.dataTables.css" rel="stylesheet">
         <link href="css/dataTables.bootstrap.css" rel="stylesheet">
         <script src="js/jquery.dataTables.min.js"></script>
         <script src="js/dataTables.bootstrap.js"></script>
+        <script src="js/jquery.raty.min.js"></script>
+        <script src="js/jquery.truncate.min.js"></script>
+        <script src="js/jquery.livequery.js"></script>
         <script src="js/client.js"></script>
     </head>
     <body>
@@ -19,10 +22,11 @@
                     <table id="clients" class="table table-striped">
                         <thead>
                             <tr>
-                                <th>Business Name</th>
+                                <th>Business</th>
                                 <th>Address</th>
                                 <th>Phone #</th>
                                 <th>Website</th>
+                                <th>Rating</th>
                                 <th></th>
                                 <th></th>
                             </tr>
@@ -36,10 +40,19 @@
                                     <tr>
                                         <td><?=$busObj->name?></td>
                                         <td><?=$busObj->address?></td>
-                                        <td><?=$busObj->phone?></td>
-                                        <td><a href="<?=$busObj->website?>"><?=$busObj->website?></a></td>
-                                        <td><button class='btn btn-primary' data-toggle="modal" data-id="<?=$busObj->businessinfo_id?>">More...</button></td>
-                                        <td><button class='btn btn-primary <?=$busObj->website ?: 'disabled'?>'>Analysis</button></td>
+                                        <td class="phone-number"><?=$busObj->phone?></td>
+                                        <td><a href="<?=$busObj->website?>"><span class="trunc"><?=$busObj->website?></span></a></td>
+                                        <td><div class="rating"></div></td>
+                                        <td><button class='btn btn-primary info icon-user' data-toggle="modal" data-id="<?=$busObj->businessinfo_id?>">
+                                            Profile
+                                        </button></td>
+                                        <td><button 
+                                            class='btn btn-primary icon-time analyze <?=$busObj->website ? '' : 'disabled'?>' 
+                                            data-id="<?=$busObj->businessinfo_id?>" 
+                                            data-url="<?=$busObj->website?>" 
+                                            data-toggle="modal">
+                                            Analysis
+                                        </button></td>
                                     </tr>
                                     <?php
                                 }

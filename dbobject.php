@@ -153,7 +153,7 @@ class DBObject
 
 class Business extends DBObject {
     function __construct() {
-        parent::__construct('businessinfo', array("name","website","address","phone","intl_phone","type","last_update"));
+        parent::__construct('businessinfo', array("businessinfo_id","name","website","address","phone","intl_phone","type","last_update","reported"));
     }
 }
 

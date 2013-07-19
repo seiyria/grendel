@@ -12,8 +12,18 @@ if(isset($_POST["action"]) && !empty($_POST["action"])) {
 		case "get": 	getBusiness($_POST["id"]); return;
 		case "analyze": analyzeBusiness($_POST["id"], $_POST["site"], true); return;
 		case "analysis":addBusinessAnalysis($_POST["businessId"],$_POST["page"],$_POST["pluginStr"],$_POST["metaTags"],$_POST["mobileStr"],$_POST["hasContact"],$_POST["deadLinks"]); return;
+		case "flag":	flagBusiness($_POST["id"], $_POST["name"]);
 		default: return;
 	}
+}
+
+function flagBusiness($id, $name) {
+	sendErrorEmail("#F1A6", "Grendel Reporter", "$name [$id] was reported. Please look into it.");
+
+	$busObj = new Business();
+	$busObj->load($id);
+	$busObj->reported = 1;
+	$busObj->update();
 }
 
 function addNewBusiness($data) {
@@ -102,7 +112,7 @@ function showAnalysisError($code) {
 	    </div>
 	    <div class='modal-body'>
 	    	<p>
-	    		It seems like the analysis server is currently down! Please contact the developer at <a href='mailto: kyle@seiyria.com?subject=$code'>kyle@seiyria.com</a> and mention code $code and what business you were inspecting.
+	    		It seems like the analysis server is currently down! The developer has been notified of this issue. Thanks for finding a problem!
 	    	</p>
 	    </div>
 	    <div class='modal-footer'>
@@ -140,22 +150,35 @@ function showBusinessAnalysis($businessId) {
 	        <div class='form-horizontal'>
 
 	        	<div class='control-group'>
-	        		<label class='control-label'>Meta Tags</label>
+	        		<label class='control-label'>
+	        			<span class='icon-bookmark' rel='tooltip' title='The verbatim content of the <meta keywords> tag.'>
+	        				<span class='text'>Meta Tags</span>
+	        			</span>
+	        		</label>
 	        		<div class='controls'>".($curObj->meta_tags ?: 'None')."</div>
 	        	</div>
 
 	        	<div class='control-group'>
-	        		<label class='control-label'>Responsive Analysis</label>
+	        		<label class='control-label'>
+	        			<span class='icon-bookmark' rel='tooltip' title='Checking for some staple toolkits.'>
+	        				<span class='text'>Responsive Analysis</span>
+	        			</span></label>
 	        		<div class='controls'>".$mobileString."</div>
 	        	</div>
 
 	        	<div class='control-group'>
-	        		<label class='control-label'>Plugin Analysis</label>
+	        		<label class='control-label'>
+	        			<span class='icon-bookmark' rel='tooltip' title='Checking for objects that can be replaced with HTML5'>
+	        				<span class='text'>Plugin Analysis</span>
+	        			</span></label>
 	        		<div class='controls'>".$pluginString."</div>
 	        	</div>
 
 	        	<div class='control-group'>
-	        		<label class='control-label'>Has Contact Info</label>
+	        		<label class='control-label'>
+	        			<span class='icon-bookmark' rel='tooltip' title='Check for the string literal \"Contact\" on the page.'>
+	        				<span class='text'>Has Contact Info</span>
+	        			</span></label>
 	        		<div class='controls'>".boolToStr($curObj->has_contact_info_on_site)."</div>
 	        	</div>
 	        </div>
@@ -165,7 +188,7 @@ function showBusinessAnalysis($businessId) {
 	    		<span class='last-analysis'>".dateString($curObj->last_analysis)."</span>
 	    	</div>
 	        <div class='pull-right'>
-	        	<a href='#' class='btn icon-remove' data-dismiss='modal'> Close</a>
+		        <button class='btn icon-remove' data-dismiss='modal'> Close</button>
 	        </div>
 	    </div>
 	</div>
@@ -209,7 +232,7 @@ function getBusiness($id) {
 	<div class='modal hide fade'>
 	    <div class='modal-header'>
 	        <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button>
-	        <h3 id='name'>$busObj->name</h3>
+	        <h3 class='name'>$busObj->name</h3>
 	    </div>
 	    <div class='modal-body'>
 	        <div class='form-horizontal'>
@@ -236,18 +259,32 @@ function getBusiness($id) {
 	        </div>
 	    </div>
 	    <div class='modal-footer'>
-	        <a href='#' class='btn icon-remove' data-dismiss='modal'> Close</a>
+	    	<div class='pull-left'>
+	    		<span class='last-analysis'>".dateString($busObj->last_update)."</span>
+	    	</div>
+	        <div class='pull-right'>
+		        <button 
+		        class='btn btn-warning icon-flag flag-content ".($busObj->reported ? "disabled" : "")."' 
+		        data-id='$busObj->businessinfo_id'
+		        title='".flagContentTooltip($busObj->reported)."'
+		        rel='tooltip'> 
+		        Flag Content</button>
+		        <button class='btn icon-remove' data-dismiss='modal'> Close</button>
+	        </div>
 	    </div>
 	</div>
 	";
 }
 
-function sendErrorEmail($code) {
+function flagContentTooltip($isFlagged) {
+	return $isFlagged ? "This content has already been flagged." : "Flagging content means it will be considered for removal from the system. Report only if content is missing all useful data, please!";
+}
+
+function sendErrorEmail($code, $from = "Grendel", $body = "Fix this error.") {
 	include("lib/class.phpmailer.php");
 	$mail  = new PHPMailer();   
 	$mail->IsSMTP();
 
-	//GMAIL config
 	$mail->SMTPAuth   = true;
 	$mail->SMTPSecure = "ssl";
 	$mail->Host       = "smtp.gmail.com";
@@ -256,9 +293,9 @@ function sendErrorEmail($code) {
 	$mail->Password   = "n0t1fYDA3m0N";
 
 	$mail->From       = "notify@tekdice.com";
-	$mail->FromName   = "Grendel";
+	$mail->FromName   = $from;
 	$mail->Subject    = "Error: Code $code";
-	$mail->MsgHTML("Fix it.");
+	$mail->MsgHTML($body);
 
 	$mail->AddAddress("kyle@seiyria.com","Kyle Kemp");
 	$mail->IsHTML(true);

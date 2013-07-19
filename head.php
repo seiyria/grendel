@@ -4,12 +4,14 @@
 <link href="css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
 <link href="css/font-awesome.min.css" rel="stylesheet">
 <link href="css/my.css" rel="stylesheet">
+<link href="css/jquery.pnotify.default.css" rel="stylesheet">
 
 <script src="js/global.js"></script>
 <script src="js/jquery-1.10.2.min.js"></script>
 <script src="js/jquery.cookie.js"></script>
 <script src="js/storage.js"></script>
 <script src="js/bootstrap.min.js"></script>
+<script src="js/jquery.pnotify.min.js"></script>
 <script src="//d3nslu0hdya83q.cloudfront.net/dist/1.0/raven.min.js"></script>
 <script>
 	Raven.config('http://73137adecf1c442893b558324d3426e8@tekdice.com:9001/5').install();

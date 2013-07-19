@@ -21,8 +21,13 @@
 }
 
 .form-horizontal .control-label {
-	padding-top: 0;
 	font-weight: bold;
+	padding-top: 0;
+}
+
+.control-label .icon-bookmark .text {
+	font-weight: bold;
+	color: #08c;
 }
 
 #nearby-container {
@@ -42,4 +47,14 @@
 
 .phone-number {
 	font-size: 85%;
+}
+
+.ui-pnotify.stack-bar-top {
+	right: 0;
+	top: 0;
+	margin-left: 35%;
+}
+
+.tooltip {
+	z-index: 1600;
 }

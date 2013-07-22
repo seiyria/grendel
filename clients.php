@@ -40,13 +40,14 @@ include('dbobject.php');
                                 $business = new Business();
                                 $array = $business->getAll("hidden=0", "name");
                                 foreach($array as $busObj) {
+                                    $rating = calculateRating($busObj);
                                     ?>
                                     <tr>
                                         <td><?=$busObj->name?></td>
                                         <td><?=$busObj->address?></td>
                                         <td class="phone-number"><?=$busObj->phone?></td>
                                         <td><a href="<?=$busObj->website?>"><span class="trunc"><?=$busObj->website?></span></a></td>
-                                        <td><div class="rating" data-score="<?=calculateRating($busObj)?>"></div></td>
+                                        <td><div class="rating" data-score="<?=$rating?>"><span style='display: none;'><?=$rating?></span></div></td>
                                         <td><button class='btn btn-primary info icon-user' data-toggle="modal" data-id="<?=$busObj->businessinfo_id?>">
                                             <span class='textReset'>Profile</span>
                                         </button></td>

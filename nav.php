@@ -1,10 +1,11 @@
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
-        <a class="brand" href="#">Grendel</a>
+        <div class="container">
             <?php build_nav(); ?>
         <?php
 
         ?>
+        </div>
     </div>
 </div>
 
@@ -16,6 +17,7 @@ function is_current($name) {
 function build_nav() {
     ?>
     <ul class="nav">
+        <li><a class="brand" href="index.php">Tekalyze</a></li>
     <?php
 
     $current = '';

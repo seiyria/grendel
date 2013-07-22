@@ -1,6 +1,6 @@
 <?php
-
-//todo, run as web service
+error_reporting(E_ALL); 
+ini_set( 'display_errors','1');
 
 require_once('dbobject.php');
 
@@ -18,7 +18,7 @@ if(isset($_POST["action"]) && !empty($_POST["action"])) {
 }
 
 function flagBusiness($id, $name) {
-	sendErrorEmail("#F1A6", "Grendel Reporter", "$name [$id] was reported. Please look into it.");
+	sendErrorEmail("#F1A6", "Tekalyze Reporter", "$name [$id] was reported. Please look into it.");
 
 	$busObj = new Business();
 	$busObj->load($id);
@@ -35,7 +35,6 @@ function addNewBusiness($data) {
 		'address' => $business->address
 	))) > 0) return;
 
-	//literally zero fucks if the variable doesn't exist
 	$busObj->name = isset($business->name) ? $business->name : '';
 	$busObj->address = isset($business->address) ? $business->address : '';
 	$busObj->phone = isset($business->phone_number) ? $business->phone_number : '';
@@ -44,8 +43,9 @@ function addNewBusiness($data) {
 	$busObj->website = isset($business->website) ? $business->website : '';
 	$busObj->insert();
 
-	if($busObj->website)
+	if($busObj->website) {
 		analyzeBusiness($busObj->id, $busObj->website);
+	}
 }
 
 function analyzeBusiness($businessId, $website, $display = false) {
@@ -54,7 +54,6 @@ function analyzeBusiness($businessId, $website, $display = false) {
 	$hasBusinessInfo = count($busInfoObj->find(array("businessinfo_id"=>$businessId))) > 0;
 
 	if(!$hasBusinessInfo) {
-
 		$ajaxUrl = "http://".$_SERVER["SERVER_NAME"].$_SERVER["PHP_SELF"];
 
 		$ch = curl_init();
@@ -90,7 +89,6 @@ function addBusinessAnalysis($businessId, $page, $pluginStr, $metaTags, $mobileS
 	$hasBusinessInfo = count($busInfoObj->find(array("businessinfo_id"=>$businessId))) > 0;
 
 	if($hasBusinessInfo) return;
-
 	$busObj = new BusinessInfo();
 	$busObj->businessinfo_id = $businessId;
 	$busObj->page = $page;
@@ -160,7 +158,7 @@ function showBusinessAnalysis($businessId) {
 
 	        	<div class='control-group'>
 	        		<label class='control-label'>
-	        			<span class='icon-bookmark' rel='tooltip' title='Checking for some staple toolkits.'>
+	        			<span class='icon-bookmark' rel='tooltip' title='A simple check for staple toolkits.'>
 	        				<span class='text'>Responsive Analysis</span>
 	        			</span></label>
 	        		<div class='controls'>".$mobileString."</div>
@@ -168,7 +166,7 @@ function showBusinessAnalysis($businessId) {
 
 	        	<div class='control-group'>
 	        		<label class='control-label'>
-	        			<span class='icon-bookmark' rel='tooltip' title='Checking for objects that can be replaced with HTML5'>
+	        			<span class='icon-bookmark' rel='tooltip' title='A simple check for objects that can be replaced with HTML5 equivalents.'>
 	        				<span class='text'>Plugin Analysis</span>
 	        			</span></label>
 	        		<div class='controls'>".$pluginString."</div>
@@ -176,7 +174,7 @@ function showBusinessAnalysis($businessId) {
 
 	        	<div class='control-group'>
 	        		<label class='control-label'>
-	        			<span class='icon-bookmark' rel='tooltip' title='Check for the string literal \"Contact\" on the page.'>
+	        			<span class='icon-bookmark' rel='tooltip' title='A check for the string literal \"Contact\" on the page.'>
 	        				<span class='text'>Has Contact Info</span>
 	        			</span></label>
 	        		<div class='controls'>".boolToStr($curObj->has_contact_info_on_site)."</div>
@@ -188,6 +186,7 @@ function showBusinessAnalysis($businessId) {
 	    		<span class='last-analysis'>".dateString($curObj->last_analysis)."</span>
 	    	</div>
 	        <div class='pull-right'>
+		        <button class='btn btn-info icon-user info' data-id='$businessId' data-dismiss='modal' data-toggle='modal' > <span class='textReset'>Profile</span></button>
 		        <button class='btn icon-remove' data-dismiss='modal'> Close</button>
 	        </div>
 	    </div>
@@ -207,15 +206,16 @@ function buildTable($obj) {
 		"usesJqueryMobile" => "jQuery Mobile",
 		"hasFlash" => "Flash",
 		"hasJava" => "Java Applets",
-		"hasSilverlight" => "Silverlight"
+		"hasSilverlight" => "Silverlight",
+		"hasMDotPage" => "Mobile Subdomain"
 	);
 	$str = '<table class="table table-striped table-condensed table-bordered" style="clear: none;"><tbody>';
 	foreach($obj as $key=>$val) {
 		if(!isset($conversion[$key])) continue;
 		$str .= "<tr>" 
-			 . "<td>".$conversion[$key]."</td>" 
-			 . "<td width='30%'>".boolToStr($val)."</td>" 
-			 . "</tr>";
+			 .  "<td>".$conversion[$key]."</td>" 
+			 .  "<td width='30%'>".boolToStr($val)."</td>" 
+			 .  "</tr>";
 	}
 	$str .= "</tbody></table>";
 	return $str;
@@ -259,16 +259,14 @@ function getBusiness($id) {
 	        </div>
 	    </div>
 	    <div class='modal-footer'>
-	    	<div class='pull-left'>
-	    		<span class='last-analysis'>".dateString($busObj->last_update)."</span>
-	    	</div>
 	        <div class='pull-right'>
 		        <button 
 		        class='btn btn-warning icon-flag flag-content ".($busObj->reported ? "disabled" : "")."' 
-		        data-id='$busObj->businessinfo_id'
+		        data-id='$busObj->id'
 		        title='".flagContentTooltip($busObj->reported)."'
 		        rel='tooltip'> 
-		        Flag Content</button>
+		        <span class='textReset'>Flag Content</span></button>
+		        <button class='btn btn-info icon-time analyze' data-dismiss='modal' data-toggle='modal' data-id='$busObj->id' data-url='$busObj->website'> <span class='textReset'>Analysis</span></button>
 		        <button class='btn icon-remove' data-dismiss='modal'> Close</button>
 	        </div>
 	    </div>
@@ -280,7 +278,7 @@ function flagContentTooltip($isFlagged) {
 	return $isFlagged ? "This content has already been flagged." : "Flagging content means it will be considered for removal from the system. Report only if content is missing all useful data, please!";
 }
 
-function sendErrorEmail($code, $from = "Grendel", $body = "Fix this error.") {
+function sendErrorEmail($code, $from = "Tekalyze", $body = "Fix this error.") {
 	include("lib/class.phpmailer.php");
 	$mail  = new PHPMailer();   
 	$mail->IsSMTP();
@@ -300,10 +298,10 @@ function sendErrorEmail($code, $from = "Grendel", $body = "Fix this error.") {
 	$mail->AddAddress("kyle@seiyria.com","Kyle Kemp");
 	$mail->IsHTML(true);
 
-	if(!$mail->Send())
-		echo "Mailer Error: " . $mail->ErrorInfo;
-	else  
-		echo "Message sent!";
+	$mail->Send();
+		//echo "Mailer Error: " . $mail->ErrorInfo;
+	//else  
+		//echo "Message sent!";
 }
 
 ?>

@@ -1,10 +1,12 @@
-<?php include('dbobject.php'); ?>
+<?php 
+include('dbobject.php'); 
+?>
 
 <!DOCTYPE html>
 <html>
     <head>
         <?php include('head.php'); ?>
-        <title>Grendel: Businesses</title>
+        <title>Tekalyze: Businesses</title>
         <link href="css/jquery.dataTables.css" rel="stylesheet">
         <link href="css/dataTables.bootstrap.css" rel="stylesheet">
         <script src="js/jquery.dataTables.min.js"></script>
@@ -12,6 +14,7 @@
         <script src="js/jquery.raty.min.js"></script>
         <script src="js/jquery.truncate.min.js"></script>
         <script src="js/jquery.livequery.js"></script>
+        <script src="js/jquery.blockUI.js"></script>
         <script src="js/client.js"></script>
     </head>
     <body>
@@ -33,6 +36,7 @@
                         </thead>
                         <tbody>
                             <?php
+                                include_once('rating.php');
                                 $business = new Business();
                                 $array = $business->getAll("hidden=0", "name");
                                 foreach($array as $busObj) {
@@ -42,16 +46,18 @@
                                         <td><?=$busObj->address?></td>
                                         <td class="phone-number"><?=$busObj->phone?></td>
                                         <td><a href="<?=$busObj->website?>"><span class="trunc"><?=$busObj->website?></span></a></td>
-                                        <td><div class="rating"></div></td>
+                                        <td><div class="rating" data-score="<?=calculateRating($busObj)?>"></div></td>
                                         <td><button class='btn btn-primary info icon-user' data-toggle="modal" data-id="<?=$busObj->businessinfo_id?>">
-                                            Profile
+                                            <span class='textReset'>Profile</span>
                                         </button></td>
                                         <td><button 
                                             class='btn btn-primary icon-time analyze <?=$busObj->website ? '' : 'disabled'?>' 
                                             data-id="<?=$busObj->businessinfo_id?>" 
                                             data-url="<?=$busObj->website?>" 
-                                            data-toggle="modal">
-                                            Analysis
+                                            data-toggle="modal"
+                                            title="<?=$busObj->website ? '' : 'No analysis is available for this business.'?>"
+                                            rel="tooltip">
+                                            <span class='textReset'>Analysis<span>
                                         </button></td>
                                     </tr>
                                     <?php
@@ -61,6 +67,9 @@
                     </table>
                 </div>
             </div>
+        </div>
+        <div id="loader" style="display: none;">
+            <img src="img/ajax-loader.gif" />
         </div>
     </body>
 </html>

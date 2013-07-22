@@ -12,6 +12,7 @@
 <script src="js/storage.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/jquery.pnotify.min.js"></script>
+<script src="js/jquery.nicescroll.min.js"></script>
 <script src="//d3nslu0hdya83q.cloudfront.net/dist/1.0/raven.min.js"></script>
 <script>
 	Raven.config('http://73137adecf1c442893b558324d3426e8@tekdice.com:9001/5').install();
@@ -26,3 +27,7 @@
   ga('send', 'pageview');
 
 </script>
+<?
+error_reporting(E_ALL); 
+ini_set( 'display_errors','1');
+?>

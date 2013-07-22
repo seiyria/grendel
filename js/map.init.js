@@ -14,6 +14,8 @@ function initialize() {
     checkGeolocation();
 
     initMapListeners();
+
+    $("#nearby-container").niceScroll();
 }
 
 //check for geolocation for the client, and handle if they accept/deny or just don't have it
@@ -59,7 +61,7 @@ function initMapListeners() {
                 getBusinessesForPosition(lastCenter);
                 changeStatus("OK");
             }
-        }, 3000);
+        }, 1000);
     });
 }
 

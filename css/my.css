@@ -1,6 +1,4 @@
-* {
-	font-family: FontAwesome;
-}
+
 #map-container {
 	height: 500px;
 	border: 1px solid #000;
@@ -57,4 +55,16 @@
 
 .tooltip {
 	z-index: 1600;
+}
+
+tr.odd,tr.even {
+	height: 47px;
+}
+
+.modal-body {
+	max-height: 420px;
+}
+
+.textReset {
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }

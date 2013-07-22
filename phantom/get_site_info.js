@@ -6,6 +6,8 @@ var server = require('webserver').create();
 
 var service = server.listen(port, function(request, response) {
 
+	this.echo("Request received.");
+
 	var postData = JSON.parse(request.postRaw);
 
 	//TODO full scraping: https://gist.github.com/n1k0/4509789
@@ -15,6 +17,8 @@ var service = server.listen(port, function(request, response) {
 	});
 
 	casper.options.clientScripts = ["../js/jquery-1.10.2.min.js", "./URI.js"];
+
+	this.echo("Casper initialized.");
 
 	casper.on("page.error", function(msg, t) {
 		this.echo(msg, "ERROR");
@@ -26,6 +30,8 @@ var service = server.listen(port, function(request, response) {
 
 	var results = [];
 
+	this.echo("Parsing page...");
+
 	//basic page parsing
 	casper.start(url, 
 		function() { 
@@ -35,9 +41,13 @@ var service = server.listen(port, function(request, response) {
 		}
 	);
 
+	this.echo("Page parsed; sending data.");
+
 	casper.then(function() {
 		sendData(casper, dataUrl, results[0]);
 	});
+
+	this.echo("Data sent.");
 
 	//debug display of site info
 
@@ -51,6 +61,8 @@ var service = server.listen(port, function(request, response) {
 		response.write(JSON.stringify(results));
 		response.close();
 	});
+
+	this.echo("Done.");
 
 	function sendData(casper, dataUrl, data) {
 

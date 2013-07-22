@@ -583,7 +583,7 @@ class PHPMailer {
       if ($this->exceptions) {
         throw $e;
       }
-      echo $e->getMessage()."\n";
+     // echo $e->getMessage()."\n";
       return false;
     }
   }
@@ -1367,7 +1367,7 @@ class PHPMailer {
       if ($this->exceptions) {
         throw $e;
       }
-      echo $e->getMessage()."\n";
+      //echo $e->getMessage()."\n";
       if ( $e->getCode() == self::STOP_CRITICAL ) {
         return false;
       }

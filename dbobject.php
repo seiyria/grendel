@@ -22,7 +22,7 @@ $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
 class DBObject
 {
-    private $id = 0;
+    public $id = 0;
     private $table;
     private $fields = array();
 
@@ -153,7 +153,7 @@ class DBObject
 
 class Business extends DBObject {
     function __construct() {
-        parent::__construct('businessinfo', array("businessinfo_id","name","website","address","phone","intl_phone","type","last_update","reported"));
+        parent::__construct('businessinfo', array("name","website","address","phone","intl_phone","type","last_update","reported"));
     }
 }
 

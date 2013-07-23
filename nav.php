@@ -23,6 +23,7 @@ function build_nav() {
     $current = '';
 
     $pages = array("Home" => "index.php",
+                   "About" => "about.php",
                    "Search" => "map.php",
                    "Businesses" => "clients.php");
 

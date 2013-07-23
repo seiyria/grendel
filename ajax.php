@@ -73,7 +73,7 @@ function analyzeBusiness($businessId, $website, $display = false) {
 		curl_close($ch);
 
 		if($info == 404 || !$info) {
-			showAnalysisError("#1AF");
+			showAnalysisError("#1AF", "Got a 404 on our Phantom server.");
 			return;
 		}
 	}
@@ -100,8 +100,8 @@ function addBusinessAnalysis($businessId, $page, $pluginStr, $metaTags, $mobileS
 	$busObj->insert();
 }
 
-function showAnalysisError($code) {
-	sendErrorEmail($code);
+function showAnalysisError($code, $body) {
+	sendErrorEmail($code, "Tekalyze Reporter", $body);
 	echo "
 	<div class='modal hide fade'>
 	    <div class='modal-header'>
@@ -128,7 +128,7 @@ function showBusinessAnalysis($businessId) {
 	$allObjs = $busObj->find(array("businessinfo_id"=>$businessId));
 
 	if(count($allObjs) == 0) {
-		showAnalysisError("#1C0");
+		showAnalysisError("#1C0", "No previous analyses were found for $business->name ($business->id), it should have given up.");
 		return;
 	}
 

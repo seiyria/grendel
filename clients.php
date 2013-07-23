@@ -68,6 +68,7 @@ include('dbobject.php');
                     </table>
                 </div>
             </div>
+            <?php include('footer.php'); ?>
         </div>
         <div id="loader" style="display: none;">
             <img src="img/ajax-loader.gif" />

@@ -11,7 +11,7 @@
         <?php include('nav.php'); ?>
         <div class="container" id="main">
             <div class="row">
-                <div class="span8" id="map-container">
+                <div class="span7" id="map-container">
                     <div id="map-canvas"></div>
                 </div>
                 <div class="span3" id="nearby-container">
@@ -20,6 +20,7 @@
                     </ul>
                 </div>
             </div>
+            <?php include('footer.php'); ?>
         </div>
     </body>
 </html>

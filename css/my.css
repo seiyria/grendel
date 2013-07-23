@@ -104,3 +104,61 @@ body {
 .marketing p + h4 {
 	margin-top: 28px;
 }
+
+#footer > * {
+	border: 0;
+}
+
+#footerText {
+	margin-top: 10px;
+}
+
+.sidebar {
+	width: 258px;
+	top: 40px;
+	margin: 30px 0 0;
+}
+
+.sidebar li:first-child {
+	border-radius: 6px 6px 0 0;
+}
+
+.sidebar li:last-child {
+	border-radius: 0 0 6px 6px;
+}
+
+.sidebar li {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 15px;
+	padding-right: 15px;
+	width: 258px;
+	border: 1px solid #e5e5e5;
+}
+
+.sidebar .icon-chevron-right {
+	float: right;
+	margin-top: 2px;
+	margin-right: -6px;
+	opacity: .25;
+}
+
+.sidebar .nav a:hover {
+	background-color: transparent;
+}
+
+.sidebar .nav li:hover {
+	background-color: #eee;
+}
+
+.sidebar .nav li:active {
+	background-color: #eee;
+}
+
+#secondary {
+	margin-top: 30px;
+}
+
+table#ratings td:first-child {
+	width: 20%;
+}

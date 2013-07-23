@@ -33,11 +33,7 @@
 				</div>
 			</div>
 
-			<hr>
-
-			<div class="footer">
-				<p>© TEKDice 2013</p>
-			</div>
+            <?php include('footer.php'); ?>
 		</div>
 	</body>
 </html>

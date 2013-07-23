@@ -3,10 +3,12 @@ var port = '8585';
 
 //includes web server modules
 var server = require('webserver').create();
+var fs = require('fs');
+var logfile = 'casper.log';
 
 var service = server.listen(port, function(request, response) {
 
-	this.echo("Request received.");
+	fs.write(logfile, "Request received.\r\n", 'a');
 
 	var postData = JSON.parse(request.postRaw);
 
@@ -18,10 +20,10 @@ var service = server.listen(port, function(request, response) {
 
 	casper.options.clientScripts = ["../js/jquery-1.10.2.min.js", "./URI.js"];
 
-	this.echo("Casper initialized.");
+	fs.write(logfile, "Casper initialized.\r\n", 'a');
 
 	casper.on("page.error", function(msg, t) {
-		this.echo(msg, "ERROR");
+		fs.write(logfile, "[ERROR] "+msg+"\r\n", 'a');
 	})
 
 	var url = postData.website;
@@ -30,7 +32,7 @@ var service = server.listen(port, function(request, response) {
 
 	var results = [];
 
-	this.echo("Parsing page...");
+	fs.write(logfile, "Parsing page...\r\n", 'a');
 
 	//basic page parsing
 	casper.start(url, 
@@ -41,13 +43,13 @@ var service = server.listen(port, function(request, response) {
 		}
 	);
 
-	this.echo("Page parsed; sending data.");
+	fs.write(logfile, "Page parsed; sending data.\r\n", 'a');
 
 	casper.then(function() {
 		sendData(casper, dataUrl, results[0]);
 	});
 
-	this.echo("Data sent.");
+	fs.write(logfile, "Data sent.\r\n", 'a');
 
 	//debug display of site info
 
@@ -62,7 +64,7 @@ var service = server.listen(port, function(request, response) {
 		response.close();
 	});
 
-	this.echo("Done.");
+	fs.write(logfile, "Done.\r\n", 'a');
 
 	function sendData(casper, dataUrl, data) {
 
@@ -141,4 +143,5 @@ var service = server.listen(port, function(request, response) {
 	}
 
 });
+fs.write(logfile, 'Server running on port '+port+'\r\n', 'a');
 console.log('Server running on port ' + port);

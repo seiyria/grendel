@@ -16,6 +16,19 @@ function getBusinessesForPosition(position) {
         radius: '500'
     };
 
+/*
+    $.ajax({
+        url: "ajax.php", 
+        dataType: "json",
+        type: "POST",
+        async: true,
+        data: {
+            action: "place",
+            lat: position.lat(),
+            lon: position.lng()
+        }
+    });
+*/
     service.nearbySearch(request, handleFoundPlaces);
 }
 
@@ -70,29 +83,38 @@ function getDataFor(place) {
 
     if(Data.hasVar("company_"+place.name)) return;
 
-    service.getDetails(place, function(detailedPlace, status) {
-        if (status !== google.maps.places.PlacesServiceStatus.OK) throw new Error("Couldn't get anything from google: "+status);
-
-        var container = new CompanyData();
-        container.address = detailedPlace.formatted_address;
-        container.phone_number = detailedPlace.formatted_phone_number;
-        container.intl_phone_number = detailedPlace.international_phone_number;
-        container.name = detailedPlace.name;
-        container.rating = detailedPlace.rating;
-        container.types = detailedPlace.types;
-        container.website = detailedPlace.website;
-
-        Data.setVar("company_"+container.name, container);
-
-        $.ajax({
-            url: "ajax.php", 
-            dataType: "json",
-            type: "POST",
-            data: {
-                action: "add",
-                data: JSON.stringify(container)
-            }
-        });
-    });
+    var intId = setInterval(function() {
+        try {
+            service.getDetails(place, getMorePlaceDetails);
+            clearInterval(intId);
+        } catch(e) {
+            console.info("Could not get detailed information about "+place.name+"; retrying in 3...");
+        }
+    }, 3000);
 
 }
+
+var getMorePlaceDetails = function(detailedPlace, status) {
+    if (status !== google.maps.places.PlacesServiceStatus.OK) throw new Error("Couldn't get anything from google: "+status);
+
+    var container = new CompanyData();
+    container.address = detailedPlace.formatted_address;
+    container.phone_number = detailedPlace.formatted_phone_number;
+    container.intl_phone_number = detailedPlace.international_phone_number;
+    container.name = detailedPlace.name;
+    container.rating = detailedPlace.rating;
+    container.types = detailedPlace.types;
+    container.website = detailedPlace.website;
+
+    Data.setVar("company_"+container.name, container);
+
+    $.ajax({
+        url: "ajax.php", 
+        dataType: "json",
+        type: "POST",
+        data: {
+            action: "add",
+            data: JSON.stringify(container)
+        }
+    });
+};

@@ -13,8 +13,35 @@ if(isset($_POST["action"]) && !empty($_POST["action"])) {
 		case "analyze": analyzeBusiness($_POST["id"], $_POST["site"], true); return;
 		case "analysis":addBusinessAnalysis($_POST["businessId"],$_POST["page"],$_POST["pluginStr"],$_POST["metaTags"],$_POST["mobileStr"],$_POST["hasContact"],$_POST["deadLinks"]); return;
 		case "flag":	flagBusiness($_POST["id"], $_POST["name"]);
+		case "place":	getPlaces($_POST["lat"], $_POST["lon"]);
 		default: return;
 	}
+}
+
+function getPlaceInfo($placeId) {
+	$apiKey     = 'AIzaSyCExeGRSyriSgASmQ2iUVexsAcbh7imezc';
+	$location 	= $lat . ',' . $lon;
+	$radius 	= 500;
+
+	$url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
+
+	$args = array(
+					"key" => $apiKey,
+					"location" => $location,
+					"radius" => $radius
+				 );
+
+	$ch = curl_init(); 
+	curl_setopt($ch, CURLOPT_URL, $url); 
+	curl_setopt($ch, CURLOPT_HEADER, FALSE);  
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE); 
+	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($args));
+	$body = curl_exec($ch); 
+	curl_close($ch); 
+
+	echo http_build_query($args);
+
+	echo json_encode($body);
 }
 
 function flagBusiness($id, $name) {

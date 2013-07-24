@@ -53,11 +53,12 @@ function initMapListeners() {
     google.maps.event.addListener(map, 'center_changed', function() {
 
         lastCenter = map.getCenter();
+        var thisPosition = lastCenter;
         changeStatus("Updating...");
 
         //this prevents the code from executing every update, and rather, it only executes if the map sits still for 3 seconds
         setTimeout(function() {
-            if(lastCenter == map.getCenter()) {
+            if(lastCenter == thisPosition) {
                 getBusinessesForPosition(lastCenter);
                 changeStatus("OK");
             }

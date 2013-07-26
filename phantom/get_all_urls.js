@@ -45,7 +45,9 @@ function crawl(link) {
             this.warn(link + ' is missing (HTTP 404)');
         } else if (this.currentHTTPStatus === 500) {
             this.warn(link + ' is broken (HTTP 500)');
-        } else {
+        } else if(this.currentHTTPStatus == null) {
+            this.warn(link + ' is probably not present (HTTP null)');
+        }else {
             this.echo(link + f(' is okay (HTTP %s)', this.currentHTTPStatus));
         }
     });

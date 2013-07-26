@@ -15,20 +15,7 @@ function getBusinessesForPosition(position) {
         location: new google.maps.LatLng(position.lat(), position.lng()),
         radius: '500'
     };
-
-/*
-    $.ajax({
-        url: "ajax.php", 
-        dataType: "json",
-        type: "POST",
-        async: true,
-        data: {
-            action: "place",
-            lat: position.lat(),
-            lon: position.lng()
-        }
-    });
-*/
+    
     service.nearbySearch(request, handleFoundPlaces);
 }
 

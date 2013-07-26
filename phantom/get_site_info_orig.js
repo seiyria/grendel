@@ -167,7 +167,7 @@ var casper = require('casper').create();
 casper.start().thenOpen("http://localhost:8585", {
 	method: "POST",
 	data: JSON.stringify({
-		website: "http://roxysupperclub.com/",
+		website: "http://tekalyze.com/",
 		dataUrl: "",
 		businessId: ""
 	})

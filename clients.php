@@ -27,7 +27,7 @@ include('dbobject.php');
                             <tr>
                                 <th>Business</th>
                                 <th>Address</th>
-                                <th>Phone #</th>
+                                <th>Phone</th>
                                 <th>Website</th>
                                 <th>Rating</th>
                                 <th></th>

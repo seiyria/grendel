@@ -123,7 +123,7 @@ function addBusinessAnalysis($businessId, $page, $pluginStr, $metaTags, $mobileS
 	$busObj->meta_tags = $metaTags;
 	$busObj->mobile_analysis = $mobileStr;
 	$busObj->has_contact_info_on_site = $hasContact ? 1 : 0;
-	$busObj->dead_links = $deadLinks;
+	$busObj->dead_links = implode(" | ", json_decode($deadLinks));
 	$busObj->insert();
 }
 

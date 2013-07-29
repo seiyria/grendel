@@ -132,7 +132,6 @@ body {
 	padding-bottom: 10px;
 	padding-left: 15px;
 	padding-right: 15px;
-	width: 258px;
 	border: 1px solid #e5e5e5;
 }
 
@@ -161,4 +160,8 @@ body {
 
 table#ratings td:first-child {
 	width: 20%;
+}
+
+table#analysis td {
+	word-wrap: break-word;
 }

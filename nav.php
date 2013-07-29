@@ -25,7 +25,9 @@ function build_nav() {
     $pages = array("Home" => "index.php",
                    "About" => "about.php",
                    "Search" => "map.php",
-                   "Businesses" => "clients.php");
+                   "Businesses" => "clients.php",
+                   "Subscribe" => "subscribe.php"
+                   );
 
     foreach($pages as $name=>$loc) {
         if(!$current) $current = is_current($loc) ? $loc : '';

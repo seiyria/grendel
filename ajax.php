@@ -12,36 +12,29 @@ if(isset($_POST["action"]) && !empty($_POST["action"])) {
 		case "get": 	getBusiness($_POST["id"]); return;
 		case "analyze": analyzeBusiness($_POST["id"], $_POST["site"], true); return;
 		case "analysis":addBusinessAnalysis($_POST["businessId"],$_POST["page"],$_POST["pluginStr"],$_POST["metaTags"],$_POST["mobileStr"],$_POST["hasContact"],$_POST["deadLinks"]); return;
-		case "flag":	flagBusiness($_POST["id"], $_POST["name"]);
-		case "place":	getPlaces($_POST["lat"], $_POST["lon"]);
+		case "flag":	flagBusiness($_POST["id"], $_POST["name"]);return;
+		case "place":	getPlaces($_POST["lat"], $_POST["lon"]);return;
+		case "toggle":  toggleAnalysis($_POST["id"], $_POST["status"]); return;
+		case "mass":    massAnalysis($_POST["items"]);return;
 		default: return;
 	}
 }
 
-function getPlaceInfo($placeId) {
-	$apiKey     = 'AIzaSyCExeGRSyriSgASmQ2iUVexsAcbh7imezc';
-	$location 	= $lat . ',' . $lon;
-	$radius 	= 500;
+function massAnalysis($items) {
+	$businessArray = json_decode($items);
 
-	$url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
+	$timestamp = time();
 
-	$args = array(
-					"key" => $apiKey,
-					"location" => $location,
-					"radius" => $radius
-				 );
+	foreach($businessArray as $key=>$obj) {
+		addBusinessAnalysis($obj->businessId, $obj->page, json_encode($obj->pluginStr), $obj->metaTags, json_encode($obj->mobileStr), $obj->hasContact, $obj->deadLinks, $timestamp);
+	}
+}
 
-	$ch = curl_init(); 
-	curl_setopt($ch, CURLOPT_URL, $url); 
-	curl_setopt($ch, CURLOPT_HEADER, FALSE);  
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE); 
-	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($args));
-	$body = curl_exec($ch); 
-	curl_close($ch); 
-
-	echo http_build_query($args);
-
-	echo json_encode($body);
+function toggleAnalysis($businessId, $status) {
+	$busObj = new Business();
+	$busObj->load($businessId);
+	$busObj->in_progress = $status;
+	$busObj->update();
 }
 
 function flagBusiness($id, $name) {
@@ -82,7 +75,31 @@ function analyzeBusiness($businessId, $website, $display = false) {
 
 	if(!$hasBusinessInfo) {
 		$ajaxUrl = "http://".$_SERVER["SERVER_NAME"].$_SERVER["PHP_SELF"];
+		$businessId = escapeshellarg($businessId);
+		$url = escapeshellarg($website);
 
+		$isWindows = PATH_SEPARATOR == ";";
+
+		$commandArgs = " --data-url=$ajaxUrl --id=$businessId --url=$url --log-level=debug";
+
+		if($isWindows) {
+			$jquerypath = "C:\\xampp\\htdocs\\grendel\\js\\jquery-1.10.2.min.js";
+			$uripath    = "C:\\xampp\\htdocs\\grendel\\phantom\\uri.js";
+			$logPath    = "C:\\xampp\\htdocs\\grendel\\phantom\\casper.log";
+
+			$casperPath = "\"C:\Program Files (x86)\casperjs\batchbin\casperjs.bat\"";
+			$parserPath = " C:\\xampp\\htdocs\\grendel\\phantom\\get_site_info.js";
+
+			$commandArgs = " --jquery-path=\"$jquerypath\" --uri-path=\"$uripath\" --log-path=\"$logPath\"" . $commandArgs;
+
+			exec($casperPath . $parserPath . $commandArgs);
+		} else {
+			$casperPath = "casperjs";
+			$parserPath = " /var/www/tekalyze/phantom/get_site_info.js";
+			exec($casperPath . $parserPath . $commandArgs);
+		}
+
+/*
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, "localhost:8585");
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -103,6 +120,7 @@ function analyzeBusiness($businessId, $website, $display = false) {
 			showAnalysisError("#1AF", "Got a 404 on our Phantom server.");
 			return;
 		}
+*/
 	}
 
 	if($display) {
@@ -110,12 +128,13 @@ function analyzeBusiness($businessId, $website, $display = false) {
 	}
 }
 
-function addBusinessAnalysis($businessId, $page, $pluginStr, $metaTags, $mobileStr, $hasContact, $deadLinks) {
+function addBusinessAnalysis($businessId, $page, $pluginStr, $metaTags, $mobileStr, $hasContact, $deadLinks, $timestamp = null) {
+
+	if($timestamp === null) $timestamp = time();
 
 	$busInfoObj = new BusinessInfo();
 	$hasBusinessInfo = count($busInfoObj->find(array("businessinfo_id"=>$businessId))) > 0;
 
-	if($hasBusinessInfo) return;
 	$busObj = new BusinessInfo();
 	$busObj->businessinfo_id = $businessId;
 	$busObj->page = $page;
@@ -123,7 +142,8 @@ function addBusinessAnalysis($businessId, $page, $pluginStr, $metaTags, $mobileS
 	$busObj->meta_tags = $metaTags;
 	$busObj->mobile_analysis = $mobileStr;
 	$busObj->has_contact_info_on_site = $hasContact ? 1 : 0;
-	$busObj->dead_links = implode(" | ", json_decode($deadLinks));
+	$busObj->dead_links = "";
+	$busObj->historical_analysis = $timestamp;
 	$busObj->insert();
 }
 

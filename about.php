@@ -35,6 +35,9 @@
 					<section id="about">
         				<h1>About</h1>
         				<p>
+        					Tekalyze is a system that helps web developers find prospective clients by analyzing websites of businesses nearby to you! 
+        				</p>
+        				<p>
         					Tekalyze was started by a person (me!) who wanted to make finding freelance clients easier. This idea went through discussion for a while, when it eventually got a solid form (that's what you see now!). It's under constant development, as time allows, so things will likely be changing rapidly.
         				</p>
         			</section>
@@ -42,7 +45,7 @@
 					<section id="scale">
         				<h1>Rating Scale</h1>
         				<p>
-        					The website rating scale is a very simple algorithm. Over time, it will get more complex, taking into account dead links and multiple pages. Right now, it only does an analysis of the front page!
+        					The website rating scale is a very simple algorithm. Over time, it will get more complex, taking into account more criteria.
         				</p>
 	        			<table class="table table-striped pagination-centered" id="ratings">
 	        				<thead>

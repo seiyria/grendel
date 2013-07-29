@@ -11,7 +11,7 @@ $(function() {
             { "sWidth": "320px" },
         	{ "sWidth": "120px", "bSearchable": false },
         	{ "sWidth": "85px", "bSortable": false, "bSearchable": false },
-        	{ "sWidth": "95px", "bSortable": false, "bSearchable": false }
+        	{ "sWidth": "120px", "bSortable": false, "bSearchable": false }
     	],
         "fnPreDrawCallback": function() {
             $(".rating").raty({

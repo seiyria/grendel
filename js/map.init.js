@@ -30,12 +30,12 @@ function checkGeolocation() {
                 position: pos,
                 content: 'Location found using HTML5.'
             });
-*/
             var marker = new google.maps.Marker({
                 position: pos,
                 map: map,
                 title: 'My Location'
             });
+*/
 
             map.setCenter(pos);
             map.setZoom(13);

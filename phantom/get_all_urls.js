@@ -1,13 +1,7 @@
 
 var require = patchRequire(require);
 
-var casper = require("casper").create({
-    clientScripts: ["../js/jquery-1.10.2.min.js"],
-    pageSettings: {
-        loadImages: false,
-        loadPlugins: false
-    }
-});
+var casper;
 
 var checked = [];
 var currentLink = 0;
@@ -51,6 +45,7 @@ function crawl(link) {
             this.echo(link + f(' is okay (HTTP %s)', this.currentHTTPStatus));
         }
     });
+
     this.then(function() {
         var newLinks = searchLinks.call(this);
         links = links.concat(newLinks).filter(function(url) {
@@ -70,6 +65,7 @@ function searchLinks() {
                 }).map(function(i, e) {
                     return jQuery(this).attr('href');
                 });
+
     }), this.getCurrentUrl());
 }
  
@@ -94,10 +90,18 @@ function process(callback) {
     });
 }
 
-exports.allUrls = function(argUrl, callback) {
+exports.allUrls = function(argUrl, jqpath, callback) {
 
     url = baseUrl = argUrl;
     links = [url];
+
+    casper = require("casper").create({
+        clientScripts: [jqpath],
+        pageSettings: {
+            loadImages: false,
+            loadPlugins: false
+        }
+    });
 
     if (!url) {
         casper.warn('No url passed, aborting.').exit();

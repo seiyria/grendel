@@ -52,13 +52,17 @@ include('dbobject.php');
                                             <span class='textReset'>Profile</span>
                                         </button></td>
                                         <td><button 
-                                            class='btn btn-primary icon-time analyze <?=$busObj->website ? '' : 'disabled'?>' 
+                                            class='btn btn-primary icon-time analyze <?=$busObj->website && !$busObj->in_progress ? '' : 'disabled'?>' 
                                             data-id="<?=$busObj->businessinfo_id?>" 
                                             data-url="<?=$busObj->website?>" 
                                             data-toggle="modal"
-                                            title="<?=$busObj->website ? '' : 'No analysis is available for this business.'?>"
+                                            title="<?=
+                                                $busObj->website ? 
+                                                    $busObj->in_progress ?
+                                                        'This business is currently being analyzed.' : ''
+                                                 : 'No analysis is available for this business.'?>"
                                             rel="tooltip">
-                                            <span class='textReset'>Analysis<span>
+                                            <span class='textReset'><?=$busObj->in_progress ? "Analyzing..." : "Analysis"?><span>
                                         </button></td>
                                     </tr>
                                     <?php

@@ -142,7 +142,7 @@ class DBObject
         $sth->execute(array($this->id));
     }
 
-    function getAll($where, $orderby) {
+    function getAll($where, $orderby = null) {
         global $db;
         $sql = 'SELECT * FROM '.$this->table.(isset($where) ? " WHERE $where" : "").(isset($orderby) ? " ORDER BY $orderby " : " ");
         $sth = $db->prepare($sql);
@@ -153,7 +153,7 @@ class DBObject
 
 class Business extends DBObject {
     function __construct() {
-        parent::__construct('businessinfo', array("name","website","address","phone","intl_phone","type","last_update","reported"));
+        parent::__construct('businessinfo', array("name","website","address","phone","intl_phone","type","last_update","reported","in_progress"));
     }
 }
 

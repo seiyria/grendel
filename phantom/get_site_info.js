@@ -1,18 +1,7 @@
 
-var port = '8585';
-
-//includes web server modules
-var server = require('webserver').create();
 var fs = require('fs');
-var logfile = 'casper.log';
 
-var service = server.listen(port, function(request, response) {
-
-	var postData = JSON.parse(request.postRaw);
-
-	var url = postData.website;
-	var dataUrl = postData.ajaxUrl;
-	var id = postData.businessId;
+var crawlWebsite = function(url, dataUrl, id, jqpath, uripath, exitFunc) {
 
 	var results = [];
 
@@ -23,7 +12,7 @@ var service = server.listen(port, function(request, response) {
 		var casper = require('casper').create({
 			verbose: true,
 			logLevel: "error",
-			clientScripts: ["../js/jquery-1.10.2.min.js", "./URI.js"]
+			clientScripts: [jqpath, uripath]
 		});
 
 		casper.on("remote.message", function(msg, t) {
@@ -39,14 +28,15 @@ var service = server.listen(port, function(request, response) {
 		});
 
 		casper.on("log", function(entry) {
-			console.log(entry.message);
 			fs.write(logfile, entry.message+"\r\n", 'a');
 		});
 
 		casper.log("Casper initialized.", "info");
 		
 		casper.log("Parsing pages...", "info");
-		casper.log(JSON.stringify(urls), "error");
+
+		casper.log("Initializing parse.", "info");
+		analysisStatus(dataUrl, id, 1);
 
 		casper.start().each(urls, function parseThisUrl(self, url) {
 
@@ -55,14 +45,7 @@ var service = server.listen(port, function(request, response) {
 				self.log("Parsing "+url, "info");
 				var res = parsePage(this); 
 				res.id = id;
-				console.log(JSON.stringify(res));
 				results.push(res);
-
-				self.log("Page parsed; sending data.", "info");
-				self.log(JSON.stringify(res), "error");
-				//sendData(self, dataUrl, res);
-
-				self.log("Data sent.", "info");
 			});
 		});
 		/*
@@ -70,20 +53,70 @@ var service = server.listen(port, function(request, response) {
 			debug("List: "+JSON.stringify(results));
 		});*/
 
-		casper.run(function() {
-			this.log("Done", "info");
-			response.statusCode = 200;
-			response.write(JSON.stringify(results));
-			response.close();
+		casper.then(function sendData() {
+			casper.log("Sending data.", "info");
+			sendAllData(casper, dataUrl, results);
+			casper.log("Cleaning up session.", "info");
+			analysisStatus(dataUrl, id, 0);
+		});
+
+		casper.run(function sendResponse() {
+			casper.log("Done", "info");
+			//response.statusCode = 200;
+			//response.write(JSON.stringify(results));
+			//response.close();
+			exitFunc();
 		});
 	};
 
-	crawler.allUrls(url, callback);
+	function uniquify(array) {
+		var retArr = [];
+		for(var x=0; x<array.length; x++) {
 
-/*
-	casper.run(function() {
-	});
-*/
+			var found = false;
+
+			for(var y=0; y<retArr.length; y++) {
+				if(retArr[y].page == array[x].page) found = true;
+			}
+
+			if(!found) 
+				retArr.push(array[x]);
+		}
+
+		return retArr;
+	}
+
+	function sendAllData(casper, dataUrl, data) {
+
+		var send = [];
+
+		for(var x in data) {
+			send.push(formatDataObject(data[x]));
+		}
+
+		casper.log("Cleaning up data.", "info");
+		send = uniquify(send);
+
+		casper.open(dataUrl, {
+			method: "post",
+			data: {
+				action: "mass",
+				items: JSON.stringify(send)
+			}
+		});
+	}
+
+	function formatDataObject(data) {
+		return {
+			businessId: data.id,
+			page: data.uri.authority+data.uri.path,
+			pluginStr: data.plugins,
+			mobileStr: data.isResponsive,
+			metaTags: data.metaTags,
+			hasContact: data.hasContact,
+			deadLinks: []
+		};
+	}
 
 	function sendData(casper, dataUrl, data) {
 		casper.open(dataUrl, {
@@ -99,6 +132,17 @@ var service = server.listen(port, function(request, response) {
 				deadLinks: JSON.stringify([])
 			}
 		});
+	}
+
+	function analysisStatus(dataUrl, id, status) {
+		require('casper').create().start().thenOpen(dataUrl, {
+			method: "post",
+			data: {
+				action: "toggle",
+				id: id,
+				status: status
+			}
+		}).run(function(){});
 	}
 
 	function parsePage(casper) {
@@ -159,16 +203,18 @@ var service = server.listen(port, function(request, response) {
 		return result;
 	}
 
-});
+	crawler.allUrls(url, jqpath, callback);
 
-console.log('Server running on port ' + port);
+};
 
 var casper = require('casper').create();
-casper.start().thenOpen("http://localhost:8585", {
-	method: "POST",
-	data: JSON.stringify({
-		website: "http://roxysupperclub.com/",
-		dataUrl: "",
-		businessId: ""
-	})
-}).run();
+var dataUrl = casper.cli.get("data-url");
+var id = casper.cli.get("id");
+var url = casper.cli.get("url");
+var jQueryPath = casper.cli.get("jquery-path") || "../js/jquery-1.10.2.min.js";
+var URIPath = casper.cli.get("uri-path") || "./URI.js"; 
+var logfile = casper.cli.get("log-path") || "casper.local.log";
+
+crawlWebsite(url, dataUrl, id, jQueryPath, URIPath, function() {
+	casper.exit();
+});

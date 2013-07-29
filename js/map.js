@@ -4,12 +4,12 @@ var service;
 
 var lastCenter;
 
-var markers = [];
+var markers = {};
 
 //get all businesses nearby to a position
 function getBusinessesForPosition(position) {
-    $$("lat a").text(position.lat());
-    $$("lon a").text(position.lng());
+    $$("lat a").text(parseFloat(position.lat()).toFixed(7));
+    $$("lon a").text(parseFloat(position.lng()).toFixed(7));
 
     var request = {
         location: new google.maps.LatLng(position.lat(), position.lng()),
@@ -38,10 +38,17 @@ function handleFoundPlaces(results, status) {
 
 //clear all markers from the map
 function clearMarkers() {
-    for (var i = 0; i < markers.length; i++ ) {
-        markers[i].setMap(null);
+    for (prop in markers) { 
+        if (markers.hasOwnProperty(prop)) {
+            markers[prop].setMap(null);
+        }
     }
-    markers = [];
+    markers = {};
+}
+
+function clearMarker(name) {
+    if(markers.hasOwnProperty(name))
+        markers[name].setMap(null);
 }
 
 //change status text 
@@ -61,10 +68,11 @@ function drawMarker(place) {
         map: map,
         title: place.name
     });
-    markers.push(marker);
+    markers[place.name] = marker;
 }
 
 function getDataFor(place) {
+
     showInformationFor(place);
     drawMarker(place);
 
@@ -92,6 +100,11 @@ var getMorePlaceDetails = function(detailedPlace, status) {
     container.rating = detailedPlace.rating;
     container.types = detailedPlace.types;
     container.website = detailedPlace.website;
+
+    if(!container.website && !container.phone_number) {
+        clearMarker(container.name);
+        return;
+    }
 
     Data.setVar("company_"+container.name, container);
 

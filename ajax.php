@@ -87,45 +87,37 @@ function analyzeBusiness($businessId, $website, $display = false) {
 			$uripath    = "C:\\xampp\\htdocs\\grendel\\phantom\\uri.js";
 			$logPath    = "C:\\xampp\\htdocs\\grendel\\phantom\\casper.log";
 
-			$casperPath = "\"C:\Program Files (x86)\casperjs\batchbin\casperjs.bat\"";
+			$casperPath = "\"\" /D \"C:\Program Files (x86)\casperjs\batchbin\" /B casperjs.bat";
 			$parserPath = " C:\\xampp\\htdocs\\grendel\\phantom\\get_site_info.js";
 
 			$commandArgs = " --jquery-path=\"$jquerypath\" --uri-path=\"$uripath\" --log-path=\"$logPath\"" . $commandArgs;
-
-			exec($casperPath . $parserPath . $commandArgs);
 		} else {
+			$jquerypath = "/var/www/tekalyze/js/jquery-1.10.2.min.js";
+			$uripath    = " /var/www/tekalyze/phantom/URI.js";
+			$logPath    = "C:\\xampp\\htdocs\\grendel\\phantom\\casper.log";
+
 			$casperPath = "casperjs";
 			$parserPath = " /var/www/tekalyze/phantom/get_site_info.js";
-			exec($casperPath . $parserPath . $commandArgs);
+			$commandArgs = " --jquery-path=\"$jquerypath\" --uri-path=\"$uripath\" --log-path=\"$logPath\"" . $commandArgs;
 		}
 
-/*
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, "localhost:8585");
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_POST, true);
+		$command = $casperPath . $parserPath . $commandArgs;
 
-		$data = array(
-		    'ajaxUrl' => $ajaxUrl,
-		    'businessId' => $businessId,
-		    'website' => $website
-		);
-
-		curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-		$output = curl_exec($ch);
-		$info = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		curl_close($ch);
-
-		if($info == 404 || !$info) {
-			showAnalysisError("#1AF", "Got a 404 on our Phantom server.");
-			return;
-		}
-*/
+		execInBackground($command);
 	}
 
 	if($display) {
 		showBusinessAnalysis($businessId);
 	}
+}
+
+function execInBackground($cmd) { 
+    if (substr(php_uname(), 0, 7) == "Windows"){ 
+        pclose(popen("start ". $cmd, "r"));  
+    } 
+    else { 
+        exec($cmd . " > /dev/null &");   
+    } 
 }
 
 function addBusinessAnalysis($businessId, $page, $pluginStr, $metaTags, $mobileStr, $hasContact, $deadLinks, $timestamp = null) {
@@ -149,15 +141,18 @@ function addBusinessAnalysis($businessId, $page, $pluginStr, $metaTags, $mobileS
 
 function showAnalysisError($code, $body) {
 	sendErrorEmail($code, "Tekalyze Reporter", $body);
+	$messages = array("#1C0" => "It looks like there isn't currently an analysis for this business. Check back in 8-10 minutes and it should be here.",
+
+					 );
 	echo "
 	<div class='modal hide fade'>
 	    <div class='modal-header'>
 	        <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button>
-	        <h3 id='name'>Analysis Server Error (Code $code)</h3>
+	        <h3 id='name'>Analysis Response (Code $code)</h3>
 	    </div>
 	    <div class='modal-body'>
 	    	<p>
-	    		It seems like the analysis server is currently down! The developer has been notified of this issue. Thanks for finding a problem!
+	    		$messages[$code]
 	    	</p>
 	    </div>
 	    <div class='modal-footer'>

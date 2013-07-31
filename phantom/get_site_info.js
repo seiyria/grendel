@@ -38,20 +38,31 @@ var crawlWebsite = function(url, dataUrl, id, jqpath, uripath, exitFunc) {
 		casper.log("Initializing parse.", "info");
 		analysisStatus(dataUrl, id, 1);
 
-		casper.start().each(urls, function parseThisUrl(self, url) {
+		var getUrlsFor = function(url) {
+			return copyData.filter(function(urlData) {
+				return url == urlData.source;
+			});
+		}
+
+		var copyData = urls;
+
+		urls = urls.filter(function(linkData) {
+            return linkData.status == 200;
+        });
+
+		casper.start().each(urls, function parseThisUrl(self, urlData) {
+
+			var url = urlData.url;
 
 			self.thenOpen(url, function parseUrlInner() {
 				
 				self.log("Parsing "+url, "info");
 				var res = parsePage(this); 
 				res.id = id;
+				res.urls = getUrlsFor(url);
 				results.push(res);
 			});
 		});
-		/*
-		casper.then(function() {
-			debug("List: "+JSON.stringify(results));
-		});*/
 
 		casper.then(function sendData() {
 			casper.log("Sending data.", "info");
@@ -62,9 +73,6 @@ var crawlWebsite = function(url, dataUrl, id, jqpath, uripath, exitFunc) {
 
 		casper.run(function sendResponse() {
 			casper.log("Done", "info");
-			//response.statusCode = 200;
-			//response.write(JSON.stringify(results));
-			//response.close();
 			exitFunc();
 		});
 	};
@@ -114,7 +122,7 @@ var crawlWebsite = function(url, dataUrl, id, jqpath, uripath, exitFunc) {
 			mobileStr: data.isResponsive,
 			metaTags: data.metaTags,
 			hasContact: data.hasContact,
-			deadLinks: []
+			deadLinks: data.urls
 		};
 	}
 
@@ -129,7 +137,7 @@ var crawlWebsite = function(url, dataUrl, id, jqpath, uripath, exitFunc) {
 				mobileStr: JSON.stringify(data.isResponsive),
 				metaTags: data.metaTags,
 				hasContact: data.hasContact,
-				deadLinks: JSON.stringify([])
+				deadLinks: JSON.stringify(data.urls)
 			}
 		});
 	}
@@ -203,13 +211,13 @@ var crawlWebsite = function(url, dataUrl, id, jqpath, uripath, exitFunc) {
 		return result;
 	}
 
-	crawler.allUrls(url, jqpath, callback);
+	crawler.allUrls(url, jqpath, logfile, callback);
 
 };
 
 var casper = require('casper').create();
-var dataUrl = casper.cli.get("data-url");
-var id = casper.cli.get("id");
+var dataUrl = casper.cli.get("data-url") || "http://localhost/grendel/ajax.php";
+var id = casper.cli.get("id") || "1";
 var url = casper.cli.get("url");
 var jQueryPath = casper.cli.get("jquery-path") || "../js/jquery-1.10.2.min.js";
 var URIPath = casper.cli.get("uri-path") || "./URI.js"; 

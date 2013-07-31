@@ -2,9 +2,6 @@
     <div class="navbar-inner">
         <div class="container">
             <?php build_nav(); ?>
-        <?php
-
-        ?>
         </div>
     </div>
 </div>
@@ -33,12 +30,15 @@ function build_nav() {
         if(!$current) $current = is_current($loc) ? $loc : '';
         ?>
         <li<?=is_current($loc) ? " class='active'" : ''?>><a href="<?=$loc?>"><?=$name?></a></li>
-
         <?php
     }
     ?>
     </ul>
     <?php
+
+    if(!$current) {
+        $current = $_SERVER["SCRIPT_FILENAME"];
+    }
     
     if(file_exists(basename($current, ".php")."_nav.php"))
         include(basename($current, ".php")."_nav.php");

@@ -16,6 +16,11 @@ function initialize() {
     initMapListeners();
 
     $("#nearby-container").niceScroll();
+
+    $.pnotify({
+        text: "To get started, just scroll around the map! When you think you've got enough data to look at, head over to the <a href='clients.php'>businesses page</a> and check out the analytics!",
+        title: "Intro"
+    });
 }
 
 //check for geolocation for the client, and handle if they accept/deny or just don't have it

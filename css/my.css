@@ -165,3 +165,10 @@ table#ratings td:first-child {
 table#analysis td {
 	word-wrap: break-word;
 }
+
+.favorite {
+	float: left;
+	margin-right: 5px;
+	margin-top: 7px;
+	cursor: pointer;
+}

@@ -48,13 +48,18 @@ $(function() {
             if(!isModalActive())
                 $(data).modal();
         }).fail(function(data) {
-
+            var opts = {
+                title: "Failed to get an analysis",
+                text: "Sorry! Try again later.",
+                type: "error"
+            };
+            $.pnotify(opts);
         }).always(function(data) {
             $.unblockUI();
         });
     });
 
-    $(document).on("click", ".analyze[data-toggle='modal']", function(e) {
+    $(document).on("click", ".analyze[data-toggle='modal']:not(.analyze.disabled)", function(e) {
         e.preventDefault();
 
         $.blockUI();
@@ -72,6 +77,12 @@ $(function() {
                 $(data).modal();
 
         }).fail(function(data) {
+            var opts = {
+                title: "Failed to get an analysis",
+                text: "Sorry! Try again later.",
+                type: "error"
+            };
+            $.pnotify(opts);
 
         }).always(function(data) {
             $.unblockUI();
@@ -108,6 +119,18 @@ $(function() {
             };
             $.pnotify(opts);
         });
+    });
+
+    $(document).on("click", "i.favorite", function() {
+        ga('send', 'event', 'Subscription Features', 'click', 'Favorite');
+    });
+
+    $(document).on("click", "i.hover", function() {
+        ga('send', 'event', 'Subscription Features', 'hover', 'Favorite');
+    });
+
+    $(document).on("click", ".subscribe", function() {
+        ga('send', 'event', 'Subscription Features', 'click', 'Subscribe [Popup]');
     });
 
     $("[rel=tooltip]").livequery(function() {

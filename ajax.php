@@ -26,7 +26,7 @@ function massAnalysis($items) {
 	$timestamp = time();
 
 	foreach($businessArray as $key=>$obj) {
-		addBusinessAnalysis($obj->businessId, $obj->page, json_encode($obj->pluginStr), $obj->metaTags, json_encode($obj->mobileStr), $obj->hasContact, $obj->deadLinks, $timestamp);
+		addBusinessAnalysis($obj->businessId, $obj->page, json_encode($obj->pluginStr), $obj->metaTags, json_encode($obj->mobileStr), $obj->hasContact, json_encode($obj->deadLinks), $timestamp);
 	}
 }
 
@@ -94,7 +94,7 @@ function analyzeBusiness($businessId, $website, $display = false) {
 		} else {
 			$jquerypath = "/var/www/tekalyze/js/jquery-1.10.2.min.js";
 			$uripath    = " /var/www/tekalyze/phantom/URI.js";
-			$logPath    = "C:\\xampp\\htdocs\\grendel\\phantom\\casper.log";
+			$logPath    = "/var/www/tekalyze/phantom/casper.log";
 
 			$casperPath = "casperjs";
 			$parserPath = " /var/www/tekalyze/phantom/get_site_info.js";
@@ -134,7 +134,7 @@ function addBusinessAnalysis($businessId, $page, $pluginStr, $metaTags, $mobileS
 	$busObj->meta_tags = $metaTags;
 	$busObj->mobile_analysis = $mobileStr;
 	$busObj->has_contact_info_on_site = $hasContact ? 1 : 0;
-	$busObj->dead_links = "";
+	$busObj->dead_links = $deadLinks;
 	$busObj->historical_analysis = $timestamp;
 	$busObj->insert();
 }
@@ -183,7 +183,9 @@ function showBusinessAnalysis($businessId) {
 	<div class='modal hide fade'>
 	    <div class='modal-header'>
 	        <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button>
+	        <i class='favorite icon-star-empty' rel='tooltip' title='Favoriting is only available to subscribed members.'></i>
 	        <h3 id='name'>Analysis For $business->name</h3>
+	        <a class='subscribe italic pagination-centered btn btn-link' href='subscribe.php' target='_blank'>(Subscribe for more detailed analytics!)</a>
 	    </div>
 	    <div class='modal-body'>
 	    	<h4 class='pagination-centered'>Frontpage Analysis</h4>
@@ -274,6 +276,7 @@ function getBusiness($id) {
 	<div class='modal hide fade'>
 	    <div class='modal-header'>
 	        <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button>
+	        <i class='favorite icon-star-empty'></i>
 	        <h3 class='name'>$busObj->name</h3>
 	    </div>
 	    <div class='modal-body'>
@@ -308,7 +311,7 @@ function getBusiness($id) {
 		        title='".flagContentTooltip($busObj->reported)."'
 		        rel='tooltip'> 
 		        <span class='textReset'>Flag Content</span></button>
-		        <button class='btn btn-info icon-time analyze' data-dismiss='modal' data-toggle='modal' data-id='$busObj->id' data-url='$busObj->website'> <span class='textReset'>Analysis</span></button>
+		        <button class='btn btn-info icon-time analyze ".($busObj->website && !$busObj->in_progress ? '' : 'disabled')."' data-dismiss='modal' data-toggle='modal' data-id='$busObj->id' data-url='$busObj->website'> <span class='textReset'>Analysis</span></button>
 		        <button class='btn icon-remove' data-dismiss='modal'> Close</button>
 	        </div>
 	    </div>

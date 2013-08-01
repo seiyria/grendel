@@ -162,3 +162,9 @@ class BusinessInfo extends DBObject {
         parent::__construct('businessanalysis', array("businessinfo_id", "page", "plugin_analysis","meta_tags","seo_rank","mobile_analysis","has_contact_info_on_site", "dead_links", "last_analysis"));
     }
 }
+
+class UserInfo extends DBObject {
+    function __construct() {
+        parent::__construct('marketingemails', array("ip", "email"));
+    }
+}

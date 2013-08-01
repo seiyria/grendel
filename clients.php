@@ -46,7 +46,7 @@ include('dbobject.php');
                                         <td><?=$busObj->name?></td>
                                         <td><?=$busObj->address?></td>
                                         <td class="phone-number"><?=$busObj->phone?></td>
-                                        <td><a href="<?=$busObj->website?>"><span class="trunc"><?=$busObj->website?></span></a></td>
+                                        <td><a target="_blank" href="<?=$busObj->website?>"><span class="trunc"><?=$busObj->website?></span></a></td>
                                         <td><div class="rating" data-score="<?=$rating?>"><span style='display: none;'><?=$rating?></span></div></td>
                                         <td><button class='btn btn-primary info icon-user' data-toggle="modal" data-id="<?=$busObj->businessinfo_id?>">
                                             <span class='textReset'>Profile</span>

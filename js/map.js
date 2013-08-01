@@ -58,35 +58,66 @@ function changeStatus(str) {
 
 //put a name to the place
 function showInformationFor(place) {
-    $$("nearby").append("<li>"+place.name+"</li>");
+    var str = place.website ? "<a target='_blank' href='"+place.website+"'>"+place.name+"</a>" : place.name;
+    $$("nearby").append("<li>"+str+"</li>");
+
+    sortNearby();
+}
+
+function sortNearby() {
+    var items = $$("nearby li").get();
+    items.sort(function(a,b){
+        var keyA = $(a).text();
+        var keyB = $(b).text();
+
+        if (keyA < keyB) return -1;
+        if (keyA > keyB) return 1;
+        return 0;
+    });
+    var ul = $$("nearby");
+    $.each(items, function(i, li){
+        ul.append(li);
+    });
 }
 
 //put a marker on the map for a place
 function drawMarker(place) {
     var marker = new google.maps.Marker({
-        position: new google.maps.LatLng(place.geometry.location.lat(), place.geometry.location.lng()),
+        position: new google.maps.LatLng(place.lat, place.lng),
         map: map,
         title: place.name
     });
     markers[place.name] = marker;
 }
 
+function drawDetailedPlaceInfo(place) {
+    if(placeIsInvalid(place)) return;
+    drawMarker(place);
+    showInformationFor(place);
+}
+
 function getDataFor(place) {
 
-    showInformationFor(place);
-    drawMarker(place);
-
-    if(Data.hasVar("company_"+place.name)) return;
+    if(Data.hasVar("company_"+place.name)) {
+        drawDetailedPlaceInfo(Data.getVar("company_"+place.name));
+        return;
+    }
 
     var intId = setInterval(function() {
         try {
+            changeStatus("Processing...");
             service.getDetails(place, getMorePlaceDetails);
             clearInterval(intId);
+            changeStatus("OK");
         } catch(e) {
             console.info("Could not get detailed information about "+place.name+"; retrying in 3...");
         }
     }, 3000);
 
+}
+
+function placeIsInvalid(container) {
+    return !container.website && !container.phone_number;
 }
 
 var getMorePlaceDetails = function(detailedPlace, status) {
@@ -100,8 +131,12 @@ var getMorePlaceDetails = function(detailedPlace, status) {
     container.rating = detailedPlace.rating;
     container.types = detailedPlace.types;
     container.website = detailedPlace.website;
+    container.lat = detailedPlace.geometry.location.lat();
+    container.lng = detailedPlace.geometry.location.lng();
 
-    if(!container.website && !container.phone_number) {
+    drawDetailedPlaceInfo(container);
+
+    if(placeIsInvalid(container)) {
         clearMarker(container.name);
         return;
     }
@@ -113,7 +148,7 @@ var getMorePlaceDetails = function(detailedPlace, status) {
         dataType: "json",
         type: "POST",
         data: {
-            action: "add",
+            //action: "add",
             data: JSON.stringify(container)
         }
     });

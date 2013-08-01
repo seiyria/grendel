@@ -8,6 +8,7 @@ if(isset($_POST["action"]) && !empty($_POST["action"])) {
 	
 	header('Content Type: application/json');
 	switch($_POST["action"]) {
+		case "addUser": addNewUser($_POST["email"]); return;
 		case "add": 	addNewBusiness($_POST["data"]); return;
 		case "get": 	getBusiness($_POST["id"]); return;
 		case "analyze": analyzeBusiness($_POST["id"], $_POST["site"], true); return;
@@ -18,6 +19,13 @@ if(isset($_POST["action"]) && !empty($_POST["action"])) {
 		case "mass":    massAnalysis($_POST["items"]);return;
 		default: return;
 	}
+}
+
+function addNewUser($email) {
+	$user = new UserInfo();
+	$user->ip = $_SERVER["REMOTE_ADDR"];
+	$user->email = $email;
+	$user->insert();
 }
 
 function massAnalysis($items) {

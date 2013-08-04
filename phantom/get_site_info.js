@@ -1,11 +1,11 @@
 
 var fs = require('fs');
 
-var crawlWebsite = function(url, dataUrl, id, jqpath, uripath, exitFunc) {
+var crawlWebsite = function(url, dataUrl, id, jqpath, uripath, urlModule, exitFunc) {
 
 	var results = [];
 
-	var crawler = require('./get_all_urls');
+	var crawler = require(urlModule);
 
 	var callback = function(urls) {
 
@@ -28,7 +28,7 @@ var crawlWebsite = function(url, dataUrl, id, jqpath, uripath, exitFunc) {
 		});
 
 		casper.on("log", function(entry) {
-			fs.write(logfile, entry.message+"\r\n", 'a');
+			//fs.write(logfile, entry.message+"\r\n", 'a');
 		});
 
 		casper.log("Casper initialized.", "info");
@@ -222,7 +222,8 @@ var url = casper.cli.get("url");
 var jQueryPath = casper.cli.get("jquery-path") || "../js/jquery-1.10.2.min.js";
 var URIPath = casper.cli.get("uri-path") || "./URI.js"; 
 var logfile = casper.cli.get("log-path") || "casper.local.log";
+var urlModule = casper.cli.get("url-module-path") || "./get_all_urls";
 
-crawlWebsite(url, dataUrl, id, jQueryPath, URIPath, function() {
+crawlWebsite(url, dataUrl, id, jQueryPath, URIPath, urlModule, function() {
 	casper.exit();
 });

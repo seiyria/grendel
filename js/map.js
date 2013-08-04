@@ -148,7 +148,7 @@ var getMorePlaceDetails = function(detailedPlace, status) {
         dataType: "json",
         type: "POST",
         data: {
-            //action: "add",
+            action: "add",
             data: JSON.stringify(container)
         }
     });

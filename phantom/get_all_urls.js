@@ -131,8 +131,8 @@ exports.allUrls = function(argUrl, jqpath, logfile, callback) {
     });
 
     casper.on("log", function(entry) {
-        fs.write(logfile, entry.message+"\r\n", 'a');
-        console.log(entry.message);
+        //fs.write(logfile, entry.message+"\r\n", 'a');
+        //console.log(entry.message);
     });
 
     casper.on("remote.message", function(msg, t) {

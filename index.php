@@ -13,7 +13,7 @@
 			<div class="jumbotron">
 				<h1>Tekalyze!</h1>
 				<p class="lead">For web developers, by web developers. Get all of the information you need to make a convincing sales pitch and boost your income!</p>
-				<a class="btn btn-large btn-success" href="#">Get started!</a>
+				<a class="btn btn-large btn-success" href="map.php">Get started!</a>
 			</div>
 
 			<hr>

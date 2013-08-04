@@ -54,14 +54,19 @@ function flagBusiness($id, $name) {
 	$busObj->update();
 }
 
+
 function addNewBusiness($data) {
 	$business = json_decode($data);
 
 	$busObj = new Business();
-
+	
+	echo "begin add";
 	if(count($busObj->find(array(
-		'address' => $business->address
+		'address' => $business->address,
+		'name'    => $business->name
 	))) > 0) return;
+
+	echo "has address";
 
 	$busObj->name = isset($business->name) ? $business->name : '';
 	$busObj->address = isset($business->address) ? $business->address : '';
@@ -69,9 +74,11 @@ function addNewBusiness($data) {
 	$busObj->intl_phone = isset($business->intl_phone_number) ? $business->intl_phone_number : '';
 	$busObj->type = implode(", ", isset($business->types) ? $business->types : array());
 	$busObj->website = isset($business->website) ? $business->website : '';
+	echo "properties success";	
 	$busObj->insert();
-
+	echo "adding $business->name";
 	if($busObj->website) {
+		echo "they have a site";
 		analyzeBusiness($busObj->id, $busObj->website);
 	}
 }
@@ -88,7 +95,7 @@ function analyzeBusiness($businessId, $website, $display = false) {
 
 		$isWindows = PATH_SEPARATOR == ";";
 
-		$commandArgs = " --data-url=$ajaxUrl --id=$businessId --url=$url --log-level=debug";
+		$commandArgs = " --data-url=$ajaxUrl --id=$businessId --url=$url --log-level='error'";
 
 		if($isWindows) {
 			$jquerypath = "C:\\xampp\\htdocs\\grendel\\js\\jquery-1.10.2.min.js";
@@ -101,15 +108,18 @@ function analyzeBusiness($businessId, $website, $display = false) {
 			$commandArgs = " --jquery-path=\"$jquerypath\" --uri-path=\"$uripath\" --log-path=\"$logPath\"" . $commandArgs;
 		} else {
 			$jquerypath = "/var/www/tekalyze/js/jquery-1.10.2.min.js";
-			$uripath    = " /var/www/tekalyze/phantom/URI.js";
+			$uripath    = "/var/www/tekalyze/phantom/URI.js";
 			$logPath    = "/var/www/tekalyze/phantom/casper.log";
+			$modulePath = "/var/www/tekalyze/phantom/get_all_urls";
 
-			$casperPath = "casperjs";
+			$casperPath = "/usr/bin/casperjs";
 			$parserPath = " /var/www/tekalyze/phantom/get_site_info.js";
-			$commandArgs = " --jquery-path=\"$jquerypath\" --uri-path=\"$uripath\" --log-path=\"$logPath\"" . $commandArgs;
+			$commandArgs = " --url-module-path=\"$modulePath\" --jquery-path=\"$jquerypath\" --uri-path=\"$uripath\" --log-path=\"$logPath\"" . $commandArgs;
 		}
 
 		$command = $casperPath . $parserPath . $commandArgs;
+
+		echo $command;
 
 		execInBackground($command);
 	}
@@ -124,7 +134,8 @@ function execInBackground($cmd) {
         pclose(popen("start ". $cmd, "r"));  
     } 
     else { 
-        exec($cmd . " > /dev/null &");   
+        //exec($cmd . " > /dev/null &");
+        exec("/usr/local/bin/ts " . $cmd);  
     } 
 }
 
@@ -148,7 +159,7 @@ function addBusinessAnalysis($businessId, $page, $pluginStr, $metaTags, $mobileS
 }
 
 function showAnalysisError($code, $body) {
-	sendErrorEmail($code, "Tekalyze Reporter", $body);
+	//sendErrorEmail($code, "Tekalyze Reporter", $body);
 	$messages = array("#1C0" => "It looks like there isn't currently an analysis for this business. Check back in 8-10 minutes and it should be here.",
 
 					 );
